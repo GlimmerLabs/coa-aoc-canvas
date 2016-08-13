@@ -1,3 +1,4 @@
 # Ignore confidential information
-.canvas
+.course
 .token
+.auth
