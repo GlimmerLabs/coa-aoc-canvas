@@ -1,0 +1,155 @@
+Notes on Canvas
+===============
+
+Overview at https://canvas.instructure.com/doc/api/index.html
+
+Token: 2309~59hetwGnYrLECLQMcwr1DewG1vfYilXxZZMDTWZSWKzXzjn68DhSjb6fUfFuLl0M
+
+Numbers
+-------
+
+* My Sandbox's course id is 584.
+* The Connection Outcomes ID is 2963_4271.
+* Outcome 250 is interesting (about images)
+* 798 appears to be my root outcome group
+* 1855 is one outcome (some GOA outcome)
+* 1344 is digital ethics group
+* 4959 is my sandbox
+
+Sample URLs
+-----------
+
+* <https://globalonlineacademy.instructure.com/api/v1/courses/584/discussion_topics>
+    * Hmmm ... why is there a while(1) at the beginning?
+* <https://globalonlineacademy.instructure.com/api/v1/courses/584/root_outcome_group>
+    * Redirects to <https://globalonlineacademy.instructure.com/api/v1/courses/584/outcome_groups/798>
+    * References: <https://globalonlineacademy.instructure.com/api/v1/courses/584/outcome_groups/798/outcomes>
+    * References: <https://globalonlineacademy.instructure.com/api/v1/courses/584/outcome_groups/798/subgroups>
+* <https://globalonlineacademy.instructure.com/api/v1/outcomes/1855>
+* <https://globalonlineacademy.instructure.com/api/v1/courses/584/outcome_groups/1344/outcomes>
+* <https://globalonlineacademy.instructure.com/api/v1/outcomes/4959>
+* <https://globalonlineacademy.instructure.com/api/v1/courses/584/modules?search_term=choices>
+* <https://globalonlineacademy.instructure.com/api/v1/courses/584/modules/6912/items>
+
+Sample Outcome
+--------------
+
+<pre>
+{"id":1855,
+ "context_id":584,
+ "context_type":"Course",
+ "vendor_guid":null,
+ "display_name":null,
+ "title":"Connection: You share ideas and resources with your peers that encourage them to think more deeply. ",
+ "url":"/api/v1/outcomes/1855",
+ "can_edit":true,
+ "description":null,
+ "calculation_method":"highest",
+ "points_possible":5.0,
+ "mastery_points":4.0,
+ "ratings":[{"description":"Above and beyond!","points":5.0},
+            {"description":" Good job!","points":4.0},
+            {"description":"Getting there","points":3.0},
+            {"description":"Let's talk about this!","points":2.0}],
+ "assessed":false}
+</pre>
+
+<pre>
+{"id":4959,"context_id":584,"context_type":"Course","vendor_guid":null,"display_name":"Sandbox","title":"Sandbox","url":"/api/v1/outcomes/4959","can_edit":true,"description":"\u003Cp\u003EA test to make Sam's life easier.\u003C/p\u003E","calculation_method":"highest","points_possible":5.0,"mastery_points":5.0,"ratings":[{"description":"Awesome","points":5.0},{"description":"Mediocre","points":3.0},{"description":"Ugh","points":0.0}],"assessed":false}
+
+Commands
+-------
+
+<pre>
+curl 'https://globalonlineacademy.instructure.com/api/v1/outcomes/4959.json' \
+     -X PUT \
+     --data-binary '{
+           "title": "Outcome Title",
+           "display_name": "Title for reporting",
+           "description": "Outcome description",
+           "vendor_guid": null,
+           "mastery_points": 3,
+           "ratings": [
+             { "description": "Exceeds Expectations", "points": 5 },
+             { "description": "Meets Expectations", "points": 3 },
+             { "description": "Does Not Meet Expectations", "points": 0 }
+           ]
+         }' \
+     -H "Content-Type: application/json" \
+     -H "Authorization: Bearer 2309~59hetwGnYrLECLQMcwr1DewG1vfYilXxZZMDTWZSWKzXzjn68DhSjb6fUfFuLl0M" 
+</pre>
+
+<pre>
+curl 'https://globalonlineacademy.instructure.com/api/v1/outcomes/4959.json' \
+     -X PUT \
+     --data-binary '{
+           "title": "Sandbox",
+           "display_name": "Example/Sandbox",
+           "description": "Sam plays",
+           "vendor_guid": "CoA|AoC",
+           "mastery_points": 8,
+           "ratings": [
+             {"description":"Above and beyond","points":10.0},
+             {"description":"Good job","points":8.0},
+             {"description":"Getting there","points":7.0},
+             {"description":"Lets talk about this","points":2.0}
+           ]
+         }' \
+     -H "Content-Type: application/json" \
+     -H "Authorization: Bearer 2309~59hetwGnYrLECLQMcwr1DewG1vfYilXxZZMDTWZSWKzXzjn68DhSjb6fUfFuLl0M"
+</pre>
+
+<pre>
+curl 'https://globalonlineacademy.instructure.com/api/v1/outcomes/1855.json' \
+     -X PUT \
+     --data-binary '{
+         "title":"Connection: You share ideas and resources with your peers that encourage them to think more deeply.",
+           "display_name": "Collaborate: Connection",
+           "description": null,
+           "vendor_guid": "CoA|AoC",
+           "mastery_points": 8,
+           "ratings":[
+             {"description":"Above and beyond","points":10.0},
+             {"description":"Good job","points":8.0},
+             {"description":"Getting there","points":7.0},
+             {"description":"Lets talk about this","points":2.0}
+           ]
+         }' \
+     -H "Content-Type: application/json" \
+     -H "Authorization: Bearer 2309~59hetwGnYrLECLQMcwr1DewG1vfYilXxZZMDTWZSWKzXzjn68DhSjb6fUfFuLl0M"
+</pre>
+
+<pre>
+curl 'https://globalonlineacademy.instructure.com/api/v1/outcomes/4959.json' \
+     -X PUT \
+     --data-binary '{
+           "mastery_points": 8,
+           "ratings":[
+             {"description":"Foo","points":10.0},
+             {"description":"Bar","points":8.0},
+             {"description":"Baz","points":7.0},
+             {"description":"Bam","points":2.0}
+           ]
+         }' \
+     -H "Content-Type: application/json" \
+     -H "Authorization: Bearer 2309~59hetwGnYrLECLQMcwr1DewG1vfYilXxZZMDTWZSWKzXzjn68DhSjb6fUfFuLl0M"
+</pre>
+
+<pre>
+curl https://globalonlineacademy.instructure.com/api/v1/courses/584/modules \
+     -X POST \
+     --data-binary '{
+       "module[name]":"Sandbox2", 
+       "module[position]":1}
+     }' \
+     -H "Content-Type: application/json" \
+     -H "Authorization: Bearer 2309~59hetwGnYrLECLQMcwr1DewG1vfYilXxZZMDTWZSWKzXzjn68DhSjb6fUfFuLl0M"
+</pre>
+
+<pre>
+curl https://globalonlineacademy.instructure.com/api/v1/courses/584/modules \
+     -X POST \
+     -d "module[name]=Sandbox" \
+     -d "module[position]=1" \
+     -H "Authorization: Bearer 2309~59hetwGnYrLECLQMcwr1DewG1vfYilXxZZMDTWZSWKzXzjn68DhSjb6fUfFuLl0M"
+</pre>
