@@ -1,0 +1,53 @@
+#!/usr/bin/perl
+# update-outcome-rubric nnn
+#   Update the outcome rubric for outcome number nnn using whatever
+#   I'm making the new default.
+
+# +-------+----------------------------------------------------------
+# | Notes |
+# +-------+
+
+# Portions borrowed from 
+#   http://xmodulo.com/how-to-send-http-get-or-post-request-in-perl.html
+
+# +-----------+------------------------------------------------------
+# | Libraries |
+# +-----------+
+
+use LWP::UserAgent;
+use Canvas::Setup;
+
+# +-------+----------------------------------------------------------
+# | Setup |
+# +-------+
+
+my $id = $ARGV[0];
+my $ua = LWP::UserAgent->new;
+my $server_endpoint = "https://globalonlineacademy.instructure.com/api/v1/outcomes/$id.json";
+
+# Set up basic steps of request.
+my $req = HTTP::Request->new(PUT => $server_endpoint);
+$req->header('content-type' => 'application/json');
+addAuthorization($req);
+
+# Add the appropriate data to the body
+my $post_data = '{
+  "ratings":[
+     {"description":"Above and Beyond!", "points":10},
+     {"description":"Good job!", "points":8.5},
+     {"description":"Getting there", "points":7},
+     {"description":"Let\'s talk about this!","points":2.0}
+   ]
+}';
+$req->content($post_data);
+
+# Send the request and report the results
+my $resp = $ua->request($req);
+if ($resp->is_success) {
+    my $message = $resp->decoded_content;
+    print "Received reply: [$message]\n";
+}
+else {
+    print "HTTP POST error code: [", $resp->code, "]\n";
+    print "HTTP POST error message: [", $resp->message, "]\n";
+}

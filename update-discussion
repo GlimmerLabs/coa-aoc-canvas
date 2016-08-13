@@ -1,0 +1,35 @@
+#!/usr/bin/perl
+# update-discussion id field=newval field=newval
+#   UPdate a discussion
+
+# +-------+----------------------------------------------------------
+# | Notes |
+# +-------+
+
+# +-----------+------------------------------------------------------
+# | Libraries |
+# +-----------+
+
+use LWP::UserAgent;
+use HTTP::Request::Common;
+use JSON::Parse 'parse_json';
+use Canvas::Setup;
+use Canvas::General;
+
+# +------+-----------------------------------------------------------
+# | Main |
+# +------+
+
+my %params;
+my $id = shift;
+for (my $i = 0; $i <= $#ARGV; $i++) {
+  my $entry = $ARGV[$i];
+  my ($key,$value) = split(/=/,$entry,2);
+  $params{$key} = $value;
+} # for
+
+my $req = PUT canvasURL("discussion_topics/$id"),
+          Content => \%params;
+submitRequest($req) || die "Failed to update topic.";
+
+exit 0;

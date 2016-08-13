@@ -1,0 +1,298 @@
+#!/usr/bin/perl
+# make-module file
+#   Create a module based on the information in file.  
+
+# +-------------+----------------------------------------------------
+# | File Format |
+# +-------------+
+
+#   The first line is the name of the module.
+#   Indents given by spaces (two spaces = 1 indent)
+#   External references surrounded by curly braces
+#   See the sample .module files for more information.
+
+# +-------+----------------------------------------------------------
+# | Notes |
+# +-------+
+
+# +-----------+------------------------------------------------------
+# | Libraries |
+# +-----------+
+
+use LWP::UserAgent;
+use HTTP::Request::Common;
+use JSON::Parse 'parse_json';
+use Canvas::Setup;
+
+# +-------+----------------------------------------------------------
+# | Setup |
+# +-------+
+
+my $file = $ARGV[0];
+my $ua = LWP::UserAgent->new;
+
+# +------+-----------------------------------------------------------
+# | Main |
+# +------+
+
+open my $PORT, "< $file" or die "Could not open file '$file' because $!";
+my $title = <$PORT>;
+chomp($title);
+my $module_id = makeModule($title);
+if (!$module_id) {
+  exit 1;
+}
+
+my $position = 1;
+while (my $line = <$PORT>) {
+  chomp($line);
+  $line =~ s/^( *)//;
+  my $spaces = $1;
+  my $indent = length($spaces)/2;
+
+  # Content
+  if ($line =~ m/^{/) {
+    $line =~ s/^{//;
+    $line =~ s/}$//;
+    my ($type,$title,$content_id) = split(/;/,$line);
+    if ($type eq "Assignment") {
+      if ($content_id eq "_") {
+        $content_id = makeAssignment($title);
+        if (!$content_id) {
+          print STDERR "Could not make assignment $title.\n";
+          exit 1;
+        }
+      }
+      addModuleItem($module_id, "Assignment", $title, $content_id, 
+                          $indent, $position)
+        || die "Could not add assignment $title.";
+    } # assignment
+    elsif ($type eq "Discussion") {
+      if ($content_id eq "_") {
+        $content_id = makeDiscussion($title);
+        if (!$content_id) {
+          print STDERR "Could not make discussion $title.\n";
+          exit 1;
+        }
+      }
+      addModuleItem($module_id, "Discussion", $title, $content_id, 
+                    $indent, $position)
+        || die "Could not add assignment $title.";
+    } # discussion
+    elsif ($type eq "Page") {
+      if ($content_id eq "_") {
+        $content_id = makePage($title);
+        if (!$content_id) {
+          print STDERR "Could not make page $title.\n";
+          exit 1;
+        }
+      }
+      addModuleItem($module_id, "Page", $title, $content_id, 
+                    $indent, $position)
+        || die "Could not add assignment $title.";
+    } # page
+    else {
+      print STDERR "Entry $title has unknown type: $type\n";
+      exit 1;
+    }
+  } # if content
+
+  # Headers
+  elsif (! addSubHeader($module_id, $line, $indent, $position)) {
+    print STDERR "Could not make sub header $line.\n";
+    exit 1;
+  }
+
+  # And move on to the next position
+  ++$position;
+}
+
+close $PORT;
+exit 0;
+
+# +---------+--------------------------------------------------------
+# | Methods |
+# +---------+
+
+# addDiscussion(module,title,contentid,indent,position)
+#   Add a discussion to a module
+sub addDiscussion($$$$$)
+{
+  # Grab parameters
+  my($module_id, $title, $content_id, $indent, $position) = @_;
+
+  # Report
+  print STDERR "Adding discussion $title (module: $module_id, cid: $content_id, indent: $indent, pos: $position)\n";
+
+  # Set up the request
+  my $req = POST canvasURL("items"),
+                 [ 'module_item[title]' => "$title",
+                   'module_item[type]' => "Discussion",
+                   'module_item[content_id]' => $content_id,
+                   'module_item[position]' => $position,
+                   'module_item[indent]' => $indent ];
+
+  # And submit it
+  return submitRequest($req);
+} # addDiscussion
+
+# addModuleItem(module_id, type, title, content_id, indent, position)
+sub addModuleItem($$$$$$)
+{
+  # Grab parameters
+  my($module_id, $type, $title, $content_id, $indent, $position) = @_;
+
+  # Report
+  print STDERR "Adding item $title (module: $module_id, type: $type, cid: $content_id, indent: $indent, pos: $position)\n";
+
+  # Set up the request
+  my $req;
+  if ($type eq "Page")  {
+    $req = POST canvasURL("modules/$module_id/items"),
+                [ 'module_item[title]' => $title,
+                  'module_item[type]' => $type,
+                  'module_item[page_url]' => $content_id,
+                  'module_item[position]' => $position,
+                  'module_item[indent]' => $indent ];
+  }
+  elsif ($type eq "ExternalURL") {
+    $req = POST canvasURL("modules/$module_id/items"),
+                [ 'module_item[title]' => $title,
+                  'module_item[type]' => $type,
+                  'module_item[external_url]' => $content_id,
+                  'module_item[position]' => $position,
+                  'module_item[indent]' => $indent ];
+  }
+  else {
+    $req = POST canvasURL("modules/$module_id/items"),
+                [ 'module_item[title]' => $title,
+                  'module_item[type]' => $type,
+                  'module_item[content_id]' => $content_id,
+                  'module_item[position]' => $position,
+                  'module_item[indent]' => $indent ];
+  }
+
+  # And submit it
+  return submitRequest($req);
+} # addModuleItem
+
+sub addSubHeader($$$$)
+{
+  # Grab parameters
+  my($module_id, $title, $indent, $position) = @_;
+
+  # Status
+  print STDERR "Making subheader $title (id: $module_id, indent: $indent, pos: $position)\n";
+
+  # Set up request
+  my $req = POST canvasURL("modules/$module_id/items"),
+                 [ 'module_item[title]' => "$title",
+                   'module_item[type]' => "SubHeader",
+                   'module_item[position]' => $position,
+                   'module_item[indent]' => $indent ];
+
+  # And submit it
+  return submitRequest($req);
+} # addSubHeader
+
+sub makeAssignment($) {
+  # Grab parameters
+  my ($title) = @_;
+
+  # Status
+  print STDERR "Creating assignment '$title'\n";
+
+  # Set up the request
+  my $req = POST canvasURL("assignments"),
+                 [ 'assignment[name]' => "$title",
+                   'assignment[grading_type]' => "points",
+                   'assignment[points_possible]' => 10,
+                   'assignment[submission_types]' => "[online_upload,online_text_entry,online_url]"
+                 ];
+  
+  # And do the work
+  return submitRequest($req);
+}
+
+sub makeDiscussion($) {
+  # Grab parameters
+  my ($title) = @_;
+
+  # Status
+  print STDERR "Creating discussion '$title'\n";
+
+  # Set up the request
+  my $req = POST canvasURL("discussion_topics"),
+                 [ 'title' => "$title",
+                   'discussion_type' => "threaded",
+                   'assignment[grading_type]' => "points",
+                   'assignment[points_possible]' => 10
+                 ];
+  
+  # And do the work
+  return submitRequest($req);
+} # makeDiscussion
+
+sub makeModule($) {
+  # Grab parameters
+  my ($title) = @_;
+
+  # Status
+  print STDERR "Creating module '$title'\n";
+
+  # Set up the request
+  my $req = POST canvasURL("modules"),
+                 [ 'module[name]' => "$title",
+                   'module[position]' => 1 ];
+  return submitRequest($req);
+} # makeModule
+
+sub makePage($) {
+  # Grab parameters
+  my ($title) = @_;
+
+  # Status
+  print STDERR "Creating page '$title'\n";
+
+  # Set up the request
+  my $req = POST canvasURL("pages"),
+                 [ 'wiki_page[title]' => "$title"
+                 ];
+  
+  # And do the work
+  return submitRequest($req,"url");
+} # makePage
+
+# submitRequest($req,[field])
+#   Submit a request and return either the id/field of the response 
+#   (success) or the empty string (failure).
+sub submitRequest() {
+  my ($req,$field) = @_;
+  if (! $field) { $field = "id"; }
+ 
+  # Add authorization
+  addAuthorization($req);
+
+  # For debugging/development
+  # print STDERR $req->as_string;
+  # return 5;
+
+  # Submit the request and get the response
+  my $resp = $ua->request($req);
+
+  # Report/return the results
+  if ($resp->is_success) {
+    my $message = $resp->decoded_content;
+    print STDERR "Received reply: [$message]\n";
+    my $stuff = parse_json($message);
+    my $id = @$stuff{$field};
+    print "Id is [$id]\n";
+    return "$id";
+  }
+  else {
+    print "HTTP error code: [", $resp->code, "]\n";
+    print "HTTP error message: [", $resp->message, "]\n";
+    return "";
+  }
+} # submitRequest
+
