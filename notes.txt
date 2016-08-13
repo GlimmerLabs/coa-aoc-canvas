@@ -3,8 +3,6 @@ Notes on Canvas
 
 Overview at https://canvas.instructure.com/doc/api/index.html
 
-Token: 2309~59hetwGnYrLECLQMcwr1DewG1vfYilXxZZMDTWZSWKzXzjn68DhSjb6fUfFuLl0M
-
 Numbers
 -------
 
@@ -76,7 +74,7 @@ curl 'https://globalonlineacademy.instructure.com/api/v1/outcomes/4959.json' \
            ]
          }' \
      -H "Content-Type: application/json" \
-     -H "Authorization: Bearer 2309~59hetwGnYrLECLQMcwr1DewG1vfYilXxZZMDTWZSWKzXzjn68DhSjb6fUfFuLl0M" 
+     -H "Authorization: XXX"
 </pre>
 
 <pre>
@@ -96,7 +94,7 @@ curl 'https://globalonlineacademy.instructure.com/api/v1/outcomes/4959.json' \
            ]
          }' \
      -H "Content-Type: application/json" \
-     -H "Authorization: Bearer 2309~59hetwGnYrLECLQMcwr1DewG1vfYilXxZZMDTWZSWKzXzjn68DhSjb6fUfFuLl0M"
+     -H "Authorization: XXX"
 </pre>
 
 <pre>
@@ -116,7 +114,7 @@ curl 'https://globalonlineacademy.instructure.com/api/v1/outcomes/1855.json' \
            ]
          }' \
      -H "Content-Type: application/json" \
-     -H "Authorization: Bearer 2309~59hetwGnYrLECLQMcwr1DewG1vfYilXxZZMDTWZSWKzXzjn68DhSjb6fUfFuLl0M"
+     -H "Authorization: XXX"
 </pre>
 
 <pre>
@@ -132,7 +130,7 @@ curl 'https://globalonlineacademy.instructure.com/api/v1/outcomes/4959.json' \
            ]
          }' \
      -H "Content-Type: application/json" \
-     -H "Authorization: Bearer 2309~59hetwGnYrLECLQMcwr1DewG1vfYilXxZZMDTWZSWKzXzjn68DhSjb6fUfFuLl0M"
+     -H "Authorization: XXX"
 </pre>
 
 <pre>
@@ -143,7 +141,7 @@ curl https://globalonlineacademy.instructure.com/api/v1/courses/584/modules \
        "module[position]":1}
      }' \
      -H "Content-Type: application/json" \
-     -H "Authorization: Bearer 2309~59hetwGnYrLECLQMcwr1DewG1vfYilXxZZMDTWZSWKzXzjn68DhSjb6fUfFuLl0M"
+     -H "Authorization: XXX"
 </pre>
 
 <pre>
@@ -151,5 +149,5 @@ curl https://globalonlineacademy.instructure.com/api/v1/courses/584/modules \
      -X POST \
      -d "module[name]=Sandbox" \
      -d "module[position]=1" \
-     -H "Authorization: Bearer 2309~59hetwGnYrLECLQMcwr1DewG1vfYilXxZZMDTWZSWKzXzjn68DhSjb6fUfFuLl0M"
+     -H "Authorization: XXX"
 </pre>
