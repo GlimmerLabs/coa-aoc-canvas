@@ -1,18 +1,12 @@
 #!/usr/bin/perl
 # update-discussion id field=newval field=newval
-#   UPdate a discussion
-
-# +-------+----------------------------------------------------------
-# | Notes |
-# +-------+
+#   Update a discussion by setting some fields.
 
 # +-----------+------------------------------------------------------
 # | Libraries |
 # +-----------+
 
-use LWP::UserAgent;
 use HTTP::Request::Common;
-use JSON::Parse 'parse_json';
 use Canvas::Setup;
 use Canvas::General;
 
