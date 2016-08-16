@@ -19,17 +19,16 @@
 # | Libraries |
 # +-----------+
 
-use LWP::UserAgent;
 use HTTP::Request::Common;
-use JSON::Parse 'parse_json';
 use Canvas::Setup;
+use Canvas::General;
 
 # +-------+----------------------------------------------------------
 # | Setup |
 # +-------+
 
 my $file = $ARGV[0];
-my $ua = LWP::UserAgent->new;
+# submitVerbose();
 
 # +------+-----------------------------------------------------------
 # | Main |
@@ -37,6 +36,7 @@ my $ua = LWP::UserAgent->new;
 
 open my $PORT, "< $file" or die "Could not open file '$file' because $!";
 my $title = <$PORT>;
+print $title;
 chomp($title);
 my $module_id = makeModule($title);
 if (!$module_id) {
@@ -45,6 +45,7 @@ if (!$module_id) {
 
 my $position = 1;
 while (my $line = <$PORT>) {
+  my $newline = $line;
   chomp($line);
   $line =~ s/^( *)//;
   my $spaces = $1;
@@ -54,10 +55,13 @@ while (my $line = <$PORT>) {
   if ($line =~ m/^{/) {
     $line =~ s/^{//;
     $line =~ s/}$//;
-    my ($type,$title,$content_id) = split(/;/,$line);
+    my ($type,$title,$content_id,$due,$other) = split(/;/,$line);
+    if ($due) {
+      $due = $due . "T23:59:59-05:00";
+    }
     if ($type eq "Assignment") {
       if ($content_id eq "_") {
-        $content_id = makeAssignment($title);
+        $content_id = makeAssignment($title,$due,$other);
         if (!$content_id) {
           print STDERR "Could not make assignment $title.\n";
           exit 1;
@@ -69,7 +73,7 @@ while (my $line = <$PORT>) {
     } # assignment
     elsif ($type eq "Discussion") {
       if ($content_id eq "_") {
-        $content_id = makeDiscussion($title);
+        $content_id = makeDiscussion($title,$due);
         if (!$content_id) {
           print STDERR "Could not make discussion $title.\n";
           exit 1;
@@ -95,6 +99,8 @@ while (my $line = <$PORT>) {
       print STDERR "Entry $title has unknown type: $type\n";
       exit 1;
     }
+    $newline =~ s/;_;/;$content_id;/;
+    $newline =~ s/;_}/;$content_id}/;
   } # if content
 
   # Headers
@@ -102,6 +108,9 @@ while (my $line = <$PORT>) {
     print STDERR "Could not make sub header $line.\n";
     exit 1;
   }
+
+  # Print the updated line
+  print $newline;
 
   # And move on to the next position
   ++$position;
@@ -195,39 +204,53 @@ sub addSubHeader($$$$)
   return submitRequest($req);
 } # addSubHeader
 
-sub makeAssignment($) {
+sub makeAssignment($;$$) {
   # Grab parameters
-  my ($title) = @_;
+  my ($title,$due,$points) = @_;
+
+  # Make sure we have a points value
+  if (! $points) {
+    $points = 10;
+  }
 
   # Status
-  print STDERR "Creating assignment '$title'\n";
+  print STDERR "Creating assignment '$title' due '$due'\n";
 
   # Set up the request
+  my %params = ('assignment[name]' => "$title",
+                'assignment[grading_type]' => "points",
+                'assignment[points_possible]' => $points,
+#              'assignment[submission_types][]' => '[online_upload,online_text_entry,online_url]'
+               );
+  if ($due) {
+    $params{"assignment[due_at]"} = $due;
+  }
   my $req = POST canvasURL("assignments"),
-                 [ 'assignment[name]' => "$title",
-                   'assignment[grading_type]' => "points",
-                   'assignment[points_possible]' => 10,
-                   'assignment[submission_types]' => "[online_upload,online_text_entry,online_url]"
-                 ];
+                 Content => \%params;
   
   # And do the work
   return submitRequest($req);
 }
 
-sub makeDiscussion($) {
+sub makeDiscussion($;$$) {
   # Grab parameters
-  my ($title) = @_;
+  my ($title,$due,$points) = @_;
+  if (!$points) { $points = 10; }
 
   # Status
-  print STDERR "Creating discussion '$title'\n";
+  print STDERR "Creating discussion '$title', due '$due'\n";
 
   # Set up the request
+  my %params = ( 'title' => "$title",
+                 'discussion_type' => "threaded",
+                 'assignment[grading_type]' => "points",
+                 'assignment[points_possible]' => $points );
+  
+  if ($due) {
+    $params{"assignment[due_at]"} = $due;
+  }
   my $req = POST canvasURL("discussion_topics"),
-                 [ 'title' => "$title",
-                   'discussion_type' => "threaded",
-                   'assignment[grading_type]' => "points",
-                   'assignment[points_possible]' => 10
-                 ];
+                 Content => \%params;
   
   # And do the work
   return submitRequest($req);
@@ -262,37 +285,4 @@ sub makePage($) {
   # And do the work
   return submitRequest($req,"url");
 } # makePage
-
-# submitRequest($req,[field])
-#   Submit a request and return either the id/field of the response 
-#   (success) or the empty string (failure).
-sub submitRequest() {
-  my ($req,$field) = @_;
-  if (! $field) { $field = "id"; }
- 
-  # Add authorization
-  addAuthorization($req);
-
-  # For debugging/development
-  # print STDERR $req->as_string;
-  # return 5;
-
-  # Submit the request and get the response
-  my $resp = $ua->request($req);
-
-  # Report/return the results
-  if ($resp->is_success) {
-    my $message = $resp->decoded_content;
-    print STDERR "Received reply: [$message]\n";
-    my $stuff = parse_json($message);
-    my $id = @$stuff{$field};
-    print "Id is [$id]\n";
-    return "$id";
-  }
-  else {
-    print "HTTP error code: [", $resp->code, "]\n";
-    print "HTTP error message: [", $resp->message, "]\n";
-    return "";
-  }
-} # submitRequest
 
