@@ -2,3 +2,17 @@
 .course
 .token
 .auth
+
+# Ignore generated files
+*.html
+*.mdhtml
+*.upload
+*.page
+*.discussion
+*.assignment
+
+# Ignore vi swap files
+*.swp
+
+# Ignore the separate coa-aoc repo
+coa-aoc
