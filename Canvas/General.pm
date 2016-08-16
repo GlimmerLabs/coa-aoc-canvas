@@ -2,7 +2,7 @@ package Canvas::General;
 $VERSION = v0.0.1;
 require Exporter;
 @ISA = qw(Exporter);
-@EXPORT = qw(submitRequest);
+@EXPORT = qw(submitRequest submitVerbose);
 
 # +-----------+-----------------------------------------------------
 # | Libraries |
@@ -20,6 +20,7 @@ use Canvas::Setup;
 # +-------+
 
 my $ua = LWP::UserAgent->new;
+my $VERBOSE = "";
 
 # +----------+------------------------------------------------------
 # | Exported |
@@ -36,26 +37,33 @@ sub submitRequest($;$) {
   addAuthorization($req);
 
   # For debugging/development
-  print STDERR $req->as_string;
-  # return 5;
+  if ($VERBOSE) {
+    print STDERR $req->as_string;
+  }
 
   # Submit the request and get the response
   my $resp = $ua->request($req);
   # Report/return the results
   if ($resp->is_success) {
     my $message = $resp->decoded_content;
-    print STDERR "Received reply: [$message]\n";
+    if ($VERBOSE) {
+      print STDERR "Received reply: [$message]\n";
+    }
     my $stuff = parse_json($message);
     my $id = @$stuff{$field};
-    print "Id is [$id]\n";
+    print STDERR "Id is [$id]\n";
     return "$id";
   }
   else {
-    print "HTTP error code: [", $resp->code, "]\n";
-    print "HTTP error message: [", $resp->message, "]\n";
+    print STDERR "HTTP error code: [", $resp->code, "]\n";
+    print STDERR "HTTP error message: [", $resp->message, "]\n";
     return "";
   }
 } # submitRequest
+
+sub submitVerbose() {
+  $VERBOSE = 1;
+}
 
 # +---------+-------------------------------------------------------
 # | Cleanup |
