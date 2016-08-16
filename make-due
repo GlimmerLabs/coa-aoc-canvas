@@ -1,0 +1,92 @@
+#!/usr/bin/perl
+# make-due file
+#   Create a "when due" table based on a module file.
+#   See make-module for the format of that file.
+
+# +-------+----------------------------------------------------------
+# | Setup |
+# +-------+
+
+my $file = $ARGV[0];
+
+# +------+-----------------------------------------------------------
+# | Main |
+# +------+
+
+print <<"HEAD";
+<table style="height: 350px;" border="2" width="561" cellspacing="5" cellpadding="5">
+<thead>
+  <tr>
+    <th style="background-color: #d3d3d3;"><span style="font-size: 12pt;"><strong>Date</strong></span></th>
+    <th style="background-color: #d3d3d3;"><span style="font-size: 12pt;"><strong>Assignment</strong></span></th>
+  </tr>
+</thead>
+<tbody>
+HEAD
+
+# Read all of the tuples
+my @work;
+open my $PORT, "< $file" or die "Could not open file '$file' because $!";
+while (my $line = <$PORT>) {
+  my $newline = $line;
+  chomp($line);
+  $line =~ s/^( *)//;
+  my $spaces = $1;
+  my $indent = length($spaces)/2;
+
+  # Content
+  if ($line =~ m/^{/) {
+    $line =~ s/^{//;
+    $line =~ s/}$//;
+    my ($type,$title,$content_id,$due,$other) = split(/;/,$line);
+    push @work, "$due;$type;$title;$content_id";
+  }
+} # while
+close $PORT;
+
+# Put 'em in order
+@work = sort @work;
+
+# Print 'em out
+foreach my $entry (@work) {
+  my ($due,$type,$title,$id) = split(/;/,$entry);
+  if ($due) {
+    my $info = formatLink($type,$title,$id);
+    print <<"ENTRY";
+  <tr>
+    <td>$due</td>
+    <td>$info</td>
+  </tr>
+ENTRY
+  } # if $due
+} # foreach
+
+# Print the end of the table
+print <<"TAIL";
+</tbody>
+</table>
+TAIL
+
+exit 0;
+
+# +---------+--------------------------------------------------------
+# | Methods |
+# +---------+
+
+sub formatLink($$$) 
+{
+  my ($type,$title,$id) = @_;
+  if ($type eq "Assignment") {
+    return "<a href='../assignments/$id'>$title</a>";
+  }
+  elsif ($type eq "Discussion") {
+    return "<a href='../discussion_topics/$id'>$title</a>";
+  }
+  elsif ($type eq "Page") {
+    return "<a href='../pages/$id'>$title</a>";
+  }
+  else {
+    return $title;
+  }
+} # formatLink
+
