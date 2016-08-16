@@ -1,0 +1,29 @@
+#!/usr/bin/perl
+# upload-page page
+#   Upload the given page
+
+# +-----------+------------------------------------------------------
+# | Libraries |
+# +-----------+
+
+use LWP::UserAgent;
+use HTTP::Request::Common;
+use JSON::Parse 'parse_json';
+use Canvas::Setup;
+use Canvas::General;
+use Path::Tiny;
+
+# +------+-----------------------------------------------------------
+# | Main |
+# +------+
+
+my $id = shift;
+my $data = path("$id.html")->slurp;
+
+$id = path("$id")->basename;
+
+my $req = PUT canvasURL("pages/$id"),
+              [ 'wiki_page[body]' => $data ];
+submitRequest($req,"url") || die "Failed to update topic.";
+
+exit 0;

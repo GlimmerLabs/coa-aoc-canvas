@@ -1,0 +1,24 @@
+#!/usr/bin/perl
+# upload-discussion id file
+#   Upload the given page
+
+# +-----------+------------------------------------------------------
+# | Libraries |
+# +-----------+
+
+use HTTP::Request::Common;
+use Canvas::Setup;
+use Canvas::General;
+use Path::Tiny;
+
+# +------+-----------------------------------------------------------
+# | Main |
+# +------+
+
+my ($id,$file) = @ARGV;
+my $data = path($file)->slurp;
+
+my $req = PUT canvasURL("discussion_topics/$id"),
+              [ 'message' => $data ];
+submitRequest($req) || die "Failed to update topic.";
+exit 0;

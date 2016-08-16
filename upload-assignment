@@ -1,0 +1,24 @@
+#!/usr/bin/perl
+# upload-assignment id file
+#   Upload the given assignment
+
+# +-----------+------------------------------------------------------
+# | Libraries |
+# +-----------+
+
+use HTTP::Request::Common;
+use Canvas::Setup;
+use Canvas::General;
+use Path::Tiny;
+
+# +------+-----------------------------------------------------------
+# | Main |
+# +------+
+
+my ($id,$file) = @ARGV;
+my $data = path($file)->slurp;
+
+my $req = PUT canvasURL("assignments/$id"),
+              [ 'assignment[description]' => $data ];
+submitRequest($req) || die "Failed to update assignment.";
+exit 0;
