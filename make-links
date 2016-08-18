@@ -1,0 +1,107 @@
+#!/usr/bin/perl
+# make-due file dir
+#   Make links from the appropriate assignment or discussion to
+#   its corresponding id.  (Makes uploading easier and more automatic.)
+#
+#   See make-module for the format of the file.
+#
+#   Assumption: File names in assignments/discussions follow what
+#   seems to be the canvas naming convention (title, all lowercase,
+#   non-alphanumeric converted to -)
+
+# +---------+--------------------------------------------------------
+# | Modules |
+# +---------+
+
+use File::Touch;
+
+# +-------+----------------------------------------------------------
+# | Setup |
+# +-------+
+
+my ($file,$dir) = @ARGV;
+if (! -f $file) { die "Could not find file '$file'\n"; }
+if (! -d $dir) { die "Could not find directory '$dir'\n"; }
+if (! -X $dir) { die "Could not write directory '$dir'\n"; }
+
+# +------+-----------------------------------------------------------
+# | Main |
+# +------+
+
+# Get ready to start processing entries
+open my $PORT, "< $file" or die "Could not open file '$file' because $!";
+
+# For some reason, this works better if we work in the target directory,
+# at least on OS/X.
+chdir $dir;
+
+# Read and process the entries
+while (my $line = <$PORT>) {
+  my $newline = $line;
+  chomp($line);
+  $line =~ s/^( *)//;
+
+  # Content
+  if ($line =~ m/^{/) {
+    $line =~ s/^{//;
+    $line =~ s/}$//;
+    my ($type,$title,$id,$due,$other) = split(/;/,$line);
+    if ($id eq "_") {
+      print STDERR "$type $title: No content id.\n";
+    }
+    else {
+      my $fname = titleToFileName($title);
+      my $sourcedir = "";
+      my $suffix = "";
+
+      # Check for the known types
+      if ($type eq "Assignment") {
+        $sourcedir = "../Assignments";
+        $suffix = "assignment";
+      } # if assignment
+      elsif ($type eq "Discussion") {
+        $sourcedir = "../Discussions";
+        $suffix = "discussion";
+      } # if discussion
+
+      if ($sourcedir) {
+        my $source = "$sourcedir/$fname.md";
+        my $target = "$id.md";
+        # print STDERR "Linking $source to $target\n";
+        if (-f $source) {
+          if (-f $target) {
+            unlink $target;
+          }
+          symlink $source, $target;
+          touch("$id.html");
+          touch("$id.$suffix");
+        } # if the source exists
+        else {
+          print STDERR "For \"$title\" ($type): Cannot find $source\n";
+        }
+      } # if it's a known type
+    } # if there's an id
+  } # if it's a content line
+} # while
+close $PORT;
+
+exit 0;
+
+# +---------+--------------------------------------------------------
+# | Methods |
+# +---------+
+
+sub titleToFileName($) 
+{
+  my ($title) = @_;
+  # Drop non-alphanumeric
+  $title =~ s/[^a-zA-Z0-9]+/-/g;
+  # Convert to lowercase
+  $title = lc $title;
+  # Check for special cases
+  if ($title =~ m/^sketches-/) {
+    return "sketchbook";
+  }
+  # Normal case
+  return $title;
+} # titleToFileName
