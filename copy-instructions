@@ -1,0 +1,34 @@
+#!/usr/bin/perl
+
+# +------+-----------------------------------------------------------
+# | Main |
+# +------+
+
+my ($dir) = @ARGV;
+copyDir("Assignments");
+copyDir("Discussions");
+
+# +---------+--------------------------------------------------------
+# | Helpers |
+# +---------+
+
+sub copyDir($) 
+{
+  my ($source) = @_;
+  opendir(my $dh, $source) || die "Could not open $source\n";
+  chdir $dir;
+  while (readdir $dh) {
+    my $file = $_;
+    if ($file =~ m/instructions.md$/) {
+      if (-f $file) { unlink $file; }
+      symlink "../$source/$file", $file;
+      my $html = $file;
+      $html =~ s/.md$/.html/;
+      if (-f $html) { unlink $html; }
+      symlink "../$source/$html", "$html";
+    } # if
+  } # while
+  close $dh;
+  chdir "..";
+} # copyDir
+
