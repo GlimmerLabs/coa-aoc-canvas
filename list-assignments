@@ -1,0 +1,46 @@
+#!/usr/bin/perl
+
+# list-assignments
+#   List all of the assignments
+
+# +-------+----------------------------------------------------------
+# | Notes |
+# +-------+
+
+# Canvas paginates long lists.  I really should grab the Links portion
+# of the header and look for the next page.  But I'm lazy.
+
+# +-----------+-----------------------------------------------------
+# | Libraries |
+# +-----------+
+
+use LWP::UserAgent;
+use HTTP::Request::Common;
+use JSON::Parse 'parse_json';
+use Canvas::Setup;
+
+# +------+-----------------------------------------------------------
+# | Main |
+# +------+
+
+my $ua = LWP::UserAgent->new;
+
+my $req = GET canvasURL("assignments?per_page=10");
+addAuthorization($req);
+my $resp = $ua->request($req);
+if ($resp->is_success) {
+  # print STDERR $resp->header("Link");
+  my $message = $resp->decoded_content;
+  # print STDERR $message;
+  my $stuff = parse_json($message);
+  my @entries = @$stuff;
+  foreach $entry (@entries) {
+    my $id = @$entry{id};
+    my $title = @$entry{name};
+    print "$id: $title\n";
+  }
+}
+else {
+  print STDERR "HTTP error code: [", $resp->code, "]\n";
+  print STDERR "HTTP error message: [", $resp->message, "]\n";
+}
