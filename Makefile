@@ -2,21 +2,8 @@
 # | Patterns |
 # +----------+
 
-%.page: %.html
-	upload-page $*
-	touch $@
-Assignments/%.assignment: Assignments/%.html
-	upload-assignment $* $^
-	touch $@
-Discussions/%.discussion: Discussions/%.html
-	upload-discussion $* $^
-	touch $@
-Live/%.assignment: Live/%.html
-	upload-assignment $* $^
-	touch $@
-Live/%.discussion: Live/%.html
-	upload-discussion $* $^
-	touch $@
+# Normal conversions
+
 %.html: %.mdhtml
 	post-process $^ > $@
 %.mdhtml: %.md
@@ -24,12 +11,27 @@ Live/%.discussion: Live/%.html
 %.module: %.template
 	make-module $^ > $@
 
-# Files that get included in most module introductions
-# (for some reason, this doesn't work.  Do it manually.)
-Introductions/%.html: Introductions/%-due.html
+# Hacks to upload things.
+
+%.page: %.html
+	upload-page $*
+	touch $@
+%.assignment: %.html
+	upload-assignment $* $^
+	touch $@
+%.discussion: %.html
+	upload-discussion $* $^
+	touch $@
+
+# Temp and Live directories.
+
+BPHOT/%.module: Modules/%.template
+	make-module $^ > $@
+Live/%.module: Modules/%.template
+	make-module $^ > $@
 
 # Extract due dates for each introduction
-Introductions/%-due.html: Modules/%.module
+%-due.html: %.module
 	make-due $^ > $@
 
 # +---------+--------------------------------------------------------
@@ -37,13 +39,11 @@ Introductions/%-due.html: Modules/%.module
 # +---------+
 
 default:
-	echo "Foo!"
+	echo "Please specify what to make."
 
-module01: Discussions/*.html Pages/*.html \
+# +------------------+-----------------------------------------------
+# | Special Patterns |
+# +------------------+
 
-
-
-# Pages/getting-started-due.html: Modules/getting-started.module
-
-Pages/getting-started.html: Pages/getting-started-due.html
-Pages/getting-started-with-processing.html: Pages/getting-started-with-processing-due.html
+BPHOT/getting-started.html: BPHOT/getting-started-due.html
+BPHOT/getting-started-with-processing.html: BPHOT/getting-strated-with-processing-due.html
