@@ -270,12 +270,21 @@ sub makeModule($) {
   return submitRequest($req);
 } # makeModule
 
-sub makePage($) {
+sub makePage($) 
+{
   # Grab parameters
   my ($title) = @_;
 
   # Status
-  print STDERR "Creating page '$title'\n";
+  print STDERR "Making page '$title'\n";
+
+  # See if the page already exists
+  my $pagename = titleToPageName($title);
+  my $exists = GET canvasURL("pages/$pagename");
+  if (my $url= submitRequest($exists,"url")) {
+    print STDERR "Page already exists as $url.\n";
+    return $url;
+  }
 
   # Set up the request
   my $req = POST canvasURL("pages"),
@@ -286,3 +295,13 @@ sub makePage($) {
   return submitRequest($req,"url");
 } # makePage
 
+sub titleToPageName($)
+{
+  my ($title) = @_;
+  # Drop non-alphanumeric
+  $title =~ s/[^a-zA-Z0-9]+/-/g;
+  # Convert to lowercase
+  $title = lc $title;
+  # Normal case
+  return $title;
+} # titleToPageName
