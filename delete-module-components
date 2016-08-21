@@ -1,0 +1,53 @@
+#!/usr/bin/perl
+# delete-module-components
+#   Remove all of the discussions and assignments associated with a
+#   module.  (Makes clearing out cruft easier.
+#
+#   See make-module for the format of the file.
+
+# +---------+--------------------------------------------------------
+# | Modules |
+# +---------+
+
+use File::Touch;
+
+# +-------+----------------------------------------------------------
+# | Setup |
+# +-------+
+
+my ($file) = @ARGV;
+if (! -f $file) { die "Could not find file '$file'\n"; }
+
+# +------+-----------------------------------------------------------
+# | Main |
+# +------+
+
+# Get ready to start processing entries
+open my $PORT, "< $file" or die "Could not open file '$file' because $!";
+
+# Read and process the entries
+while (my $line = <$PORT>) {
+  my $newline = $line;
+  chomp($line);
+  $line =~ s/^( *)//;
+
+  # Content
+  if ($line =~ m/^{/) {
+    $line =~ s/^{//;
+    $line =~ s/}$//;
+    my ($type,$title,$id,$due,$other) = split(/;/,$line);
+    # Check for the known types
+    if ($type eq "Assignment") {
+      print STDERR "Deleting assignment $id ($title)\n";
+      system "delete-assignment", $id;
+    } # if assignment
+    elsif ($type eq "Discussion") {
+      print STDERR "Deleting discussion $id ($title)\n";
+      system "delete-discussion", $id;
+    } # if discussion
+    # Should we delete pages?  I'm not sure
+  } # if it's a content line
+} # while
+close $PORT;
+
+exit 0;

@@ -1,0 +1,23 @@
+#!/usr/bin/perl
+# delete-discussion id 
+#   Delete a discussion
+
+# +-----------+------------------------------------------------------
+# | Libraries |
+# +-----------+
+
+use HTTP::Request::Common (DELETE);
+use Canvas::Setup;
+use Canvas::General;
+
+# +------+-----------------------------------------------------------
+# | Main |
+# +------+
+
+my $id = shift;
+submitVerbose();
+
+my $req = DELETE canvasURL("discussion_topics/$id");
+submitRequest($req);
+
+exit 0;

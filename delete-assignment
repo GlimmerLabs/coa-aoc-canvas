@@ -1,0 +1,23 @@
+#!/usr/bin/perl
+# delete-assignment id 
+#   Delete an assignment
+
+# +-----------+------------------------------------------------------
+# | Libraries |
+# +-----------+
+
+use HTTP::Request::Common (DELETE);
+use Canvas::Setup;
+use Canvas::General;
+
+# +------+-----------------------------------------------------------
+# | Main |
+# +------+
+
+my $id = shift;
+submitVerbose();
+
+my $req = DELETE canvasURL("assignments/$id");
+submitRequest($req);
+
+exit 0;
