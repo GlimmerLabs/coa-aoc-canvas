@@ -51,8 +51,9 @@ sub submitRequest($;$) {
     }
     my $stuff = parse_json($message);
     my $id = @$stuff{$field};
-    print STDERR "Id is [$id]\n";
-    return "$id";
+    if (!$id) { $id = ""; }
+    # print STDERR "Id is [$id]\n";
+    return $id;
   }
   else {
     print STDERR "HTTP error code: [", $resp->code, "]\n";
