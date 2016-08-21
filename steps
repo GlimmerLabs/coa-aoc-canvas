@@ -1,0 +1,28 @@
+# +-----------------+------------------------------------------------
+# | Normal Sequence |
+# +-----------------+
+
+# Copy some basic materials
+copy-instructions BPHOT
+copy-introductions BPHOT
+
+# Modules
+make BPHOT/getting-started.module
+make BPHOT/getting-started-due.html
+make-links BPHOT/getting-started.module BPHOT
+
+make BPHOT/getting-started-with-processing.module
+make-links BPHOT/getting-started-with-processing.module BPHOT
+
+# Upload!
+touch BPHOT/*.md
+make BPHOT/*.html
+make BPHOT/*.discussion
+make BPHOT/*.assignment
+
+# +---------------+--------------------------------------------------
+# | Miscellaneous |
+# +---------------+
+
+# Cleanup (later)
+rm BPHOT/[12]*.*
