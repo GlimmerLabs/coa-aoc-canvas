@@ -1,0 +1,39 @@
+#!/usr/bin/perl
+# +-----------+------------------------------------------------------
+# | Libraries |
+# +-----------+
+
+use File::Touch;
+
+# +------+-----------------------------------------------------------
+# | Main |
+# +------+
+
+my ($dir) = @ARGV;
+copyDir("Introductions");
+
+# +---------+--------------------------------------------------------
+# | Helpers |
+# +---------+
+
+sub copyDir($) 
+{
+  my ($source) = @_;
+  opendir(my $dh, $source) || die "Could not open $source\n";
+  chdir $dir;
+  while (readdir $dh) {
+    my $file = $_;
+    if (($file =~ m/.md$/) && ($file !~ m/^_/)) {
+      if (-f $file) { unlink $file; }
+      symlink "../$source/$file", $file;
+      my $html = $file;
+      $html =~ s/.md$/.html/;
+      if (! -f $html) {
+        system "touch -t 200001010000 $html";
+      }
+    } # if
+  } # while
+  close $dh;
+  chdir "..";
+} # copyDir
+
