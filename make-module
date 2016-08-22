@@ -204,6 +204,44 @@ sub addSubHeader($$$$)
   return submitRequest($req);
 } # addSubHeader
 
+# Find an existing assignment by title.  Return the assignment id if
+# we succeed, or the empty string otherwise.  Could still use some
+# work.
+sub findAssignment($)
+{
+  my ($title) = @_;
+
+  # Get a possible id.
+  my $exists = GET canvasURL("assignments?search_term=$title");
+  if (my $id = submitRequest($exists)) {
+    # Verify that the assignment with that id has the same title
+    my $verify = GET canvasURL("assignments/$id");
+    if (submitRequest($verify,"name") eq $title) {
+      return $id;
+    }
+  }
+  return "";
+} # findAssignment
+
+# Find an existing discussion by title.  Return the discussion id if
+# we succeed, or the empty string otherwise.  Could still use some
+# work.
+sub findDiscussion($)
+{
+  my ($title) = @_;
+
+  # Get a possible id.
+  my $exists = GET canvasURL("discussion_topics?search_term=$title");
+  if (my $id = submitRequest($exists)) {
+    # Verify that the discussion with that id has the same title
+    my $verify = GET canvasURL("discussion_topics/$id");
+    if (submitRequest($verify,"title") eq $title) {
+      return $id;
+    }
+  }
+  return "";
+} # findDiscussion
+
 sub makeAssignment($;$$) {
   # Grab parameters
   my ($title,$due,$points) = @_;
@@ -215,6 +253,13 @@ sub makeAssignment($;$$) {
 
   # Status
   print STDERR "Creating assignment '$title' due '$due'\n";
+
+  # See if an assignment with the same name already exists.  (We try not
+  # to duplicate assignment names.)
+  if (my $id = findAssignment($title)) {
+    print STDERR "  Assignment already exists as $id.\n";
+    return $id;
+  }
 
   # Set up the request
   my %params = ('assignment[name]' => "$title",
@@ -230,8 +275,9 @@ sub makeAssignment($;$$) {
   
   # And do the work
   return submitRequest($req);
-}
+} # makeAssignment
 
+# Create a discussion
 sub makeDiscussion($;$$) {
   # Grab parameters
   my ($title,$due,$points) = @_;
@@ -239,6 +285,13 @@ sub makeDiscussion($;$$) {
 
   # Status
   print STDERR "Creating discussion '$title', due '$due'\n";
+
+  # See if a discussion with the same name already exists.  (We try not
+  # to duplicate discussion names.)
+  if (my $id = findDiscussion($title)) {
+    print STDERR "  Discussion already exists as $id.\n";
+    return $id;
+  }
 
   # Set up the request
   my %params = ( 'title' => "$title",
