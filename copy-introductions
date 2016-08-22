@@ -1,15 +1,14 @@
 #!/usr/bin/perl
-# +-----------+------------------------------------------------------
-# | Libraries |
-# +-----------+
 
-use File::Touch;
+# Copy the introductions to one of the staging directories.
 
 # +------+-----------------------------------------------------------
 # | Main |
 # +------+
 
 my ($dir) = @ARGV;
+if (! -d $dir) { die "Could not find directory '$dir'"; }
+if (! -X $dir) { die "Could not write director '$dir'"; }
 copyDir("Introductions");
 
 # +---------+--------------------------------------------------------
@@ -28,9 +27,7 @@ sub copyDir($)
       symlink "../$source/$file", $file;
       my $html = $file;
       $html =~ s/.md$/.html/;
-      if (! -f $html) {
-        system "touch -t 200001010000 $html";
-      }
+      system "touch -t 200001010000 $html";
     } # if
   } # while
   close $dh;
