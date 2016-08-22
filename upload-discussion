@@ -17,6 +17,7 @@ use Path::Tiny;
 
 my ($id,$file) = @ARGV;
 my $data = path($file)->slurp;
+$id =~ s/.*\///;
 
 my $req = PUT canvasURL("discussion_topics/$id"),
               [ 'message' => $data ];
