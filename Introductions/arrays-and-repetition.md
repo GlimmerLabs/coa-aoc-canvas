@@ -10,7 +10,8 @@ objects.  To simplify the processing of multiple things, Processing,
 like most programming languages, includes arrays, a mechanism for
 grouping things, and repetition commands, which allow us to process
 multiple things step by step.  In this two-week module, we explore
-uses of arrays and repetition.
+uses of arrays and repetition.  We also apply some of this knowledge
+to the reproduction of an existing work.
 
 Primary competencies for this module
 ------------------------------------
@@ -25,13 +26,15 @@ Primary competencies for this module
   works computationally.
 * *Course: Computational Thinking*.  You apply principles of computational
   thinking.
+* *Course: Digital Ethics*.  You develop a personal ethics of reuse and 
+  apply it to your work in the course.
 
 Assignments
 -----------
 
-^arrays-and-repetition-assignments.html^
+^about-assignments.html^
 
-^sample-due.html^
+^arrays-and-repetition-due.html^
 
 Notes
 -----
