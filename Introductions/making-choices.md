@@ -16,7 +16,7 @@ Primary competencies for this module
 * *Core: Collaboration*.  You collaborate with peers who are not sitting
   with you on campus.
 * *Core: Cultural Awareness*.  You communicate and emphasize with people
-  living in areas of the world that are culturallly different from your
+  living in areas of the world that are culturally different from your
   own.
 * *Core: Reflection*.  You reflect on and take responsibility for your
   learning and that of others in an open forum.
