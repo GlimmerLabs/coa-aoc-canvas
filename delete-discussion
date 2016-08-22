@@ -14,10 +14,11 @@ use Canvas::General;
 # | Main |
 # +------+
 
-my $id = shift;
-submitVerbose();
-
-my $req = DELETE canvasURL("discussion_topics/$id");
-submitRequest($req);
+# submitVerbose();
+foreach my $id (@ARGV) {
+  print STDERR "Deleting discussion '$id'\n";
+  my $req = DELETE canvasURL("discussion_topics/$id");
+  submitRequest($req);
+}
 
 exit 0;
