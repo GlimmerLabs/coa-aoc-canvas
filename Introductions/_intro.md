@@ -9,7 +9,7 @@ Primary competencies for this module
 * *Core: Collaboration*.  You collaborate with peers who are not sitting
   with you on campus.
 * *Core: Cultural Awareness*.  You communicate and emphasize with people
-  living in areas of the world that are culturallly different from your
+  living in areas of the world that are culturally different from your
   own.
 * *Core: Curation/Creation*.  You leverage your curiousity to curate and
   create content that is relevant to real-world issues.
