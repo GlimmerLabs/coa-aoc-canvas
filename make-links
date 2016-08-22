@@ -9,20 +9,14 @@
 #   seems to be the canvas naming convention (title, all lowercase,
 #   non-alphanumeric converted to -)
 
-# +---------+--------------------------------------------------------
-# | Modules |
-# +---------+
-
-use File::Touch;
-
 # +-------+----------------------------------------------------------
 # | Setup |
 # +-------+
 
 my ($file,$dir) = @ARGV;
-if (! -f $file) { die "Could not find file '$file'\n"; }
-if (! -d $dir) { die "Could not find directory '$dir'\n"; }
-if (! -X $dir) { die "Could not write directory '$dir'\n"; }
+if (! -f $file) { die "Could not find file '$file'"; }
+if (! -d $dir) { die "Could not find directory '$dir'"; }
+if (! -X $dir) { die "Could not write directory '$dir'"; }
 
 # +------+-----------------------------------------------------------
 # | Main |
@@ -73,8 +67,8 @@ while (my $line = <$PORT>) {
             unlink $target;
           }
           symlink $source, $target;
-          touch("$id.html");
-          touch("$id.$suffix");
+          system "touch -t 200001010000 $id.html";
+          system "touch -t 200001010000 $id.suffix";
         } # if the source exists
         else {
           print STDERR "For \"$title\" ($type): Cannot find $source\n";
