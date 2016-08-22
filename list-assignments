@@ -25,7 +25,7 @@ use Canvas::Setup;
 
 my $ua = LWP::UserAgent->new;
 
-my $req = GET canvasURL("assignments?per_page=10");
+my $req = GET canvasURL("assignments?per_page=100");
 addAuthorization($req);
 my $resp = $ua->request($req);
 if ($resp->is_success) {
