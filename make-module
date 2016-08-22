@@ -335,7 +335,7 @@ sub makePage($)
   my $pagename = titleToPageName($title);
   my $exists = GET canvasURL("pages/$pagename");
   if (my $url= submitRequest($exists,"url")) {
-    print STDERR "Page already exists as $url.\n";
+    print STDERR "  Page already exists as $url.\n";
     return $url;
   }
 
