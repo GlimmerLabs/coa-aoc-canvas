@@ -1,7 +1,7 @@
 About Reflect and Respond
 =========================
 
-_This is a *Reflect and Respond* assignment.  You have now received
+_This is a **Reflect and Respond** assignment.  You have now received
 critiques of your assignment.  It's time to reflect on those
 critiques.  Read, watch, and/or listen to each of the critiques.
 Then, write a single response to those critiques and post it to the

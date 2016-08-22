@@ -1,7 +1,7 @@
 About Discuss
 =============
 
-_This is a *Discuss* assignment.  In these assignments, you and your
+_This is a **Discuss** assignment.  In these assignments, you and your
 peers will use our discussion board to consider some issues in depth.
 I will provide a prompt to get the discussion started, but you and your
 peers are expected to bring the discussion forward.  To be successful,

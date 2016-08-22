@@ -1,7 +1,7 @@
 About Find, Comment, Respond
 ============================
 
-_This is a *Find, Comment, Respond* assignment.  In these assignments,
+_This is a **Find, Comment, Respond** assignment.  In these assignments,
 you typically find a work or works that meet a criteria, write a short 
 piece in this discussion page commenting on those works (often guided 
 by a prompt), and then respond to a specified number of your

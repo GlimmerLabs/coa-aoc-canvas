@@ -1,7 +1,7 @@
 About Make
 ==========
 
-_This is a *Make* assignment.  In many ways, these assignments
+_This is a **Make** assignment.  In many ways, these assignments
 reflect the projects typical in a studio class.  You've gained some
 skills or learned a new technique.  It's now time to apply your new
 knowledge to a project of your own design.  To help guide your work,

@@ -1,7 +1,7 @@
 About Critiques
 ===============
 
-_This is a *Critique* assignment.  In a more traditional studio class, 
+_This is a **Critique** assignment.  In a more traditional studio class, 
 we would gather around each of your works and your peers would comment
 on what they saw in your work and, we would hope, would suggest something
 that would make you a stronger artist._
