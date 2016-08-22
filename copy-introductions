@@ -28,6 +28,9 @@ sub copyDir($)
       my $html = $file;
       $html =~ s/.md$/.html/;
       system "touch -t 200001010000 $html";
+      my $page = $file;
+      $page =~ s/.md$/.page/;
+      system "touch -t 200001010000 $page";
     } # if
   } # while
   close $dh;
