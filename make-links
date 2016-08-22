@@ -68,7 +68,7 @@ while (my $line = <$PORT>) {
           }
           symlink $source, $target;
           system "touch -t 200001010000 $id.html";
-          system "touch -t 200001010000 $id.suffix";
+          system "touch -t 200001010000 $id.$suffix";
         } # if the source exists
         else {
           print STDERR "For \"$title\" ($type): Cannot find $source\n";
