@@ -3,6 +3,13 @@ Making Choices
 
 [Video forthcoming, generally released the first day of the module]
 
+In writing programs, we often have to make choices.  For example, if we
+are animating a bouncing ball, and we reach an edge, we often want it to
+bounce.  Hence, in our program, we need to be able to ask "Is the ball at
+an edge?" and make different decisions depending on whether or not the
+ball has reached the dge.  In this module, we will explore the power of
+decision making.
+
 Primary competencies for this module
 ------------------------------------
 
