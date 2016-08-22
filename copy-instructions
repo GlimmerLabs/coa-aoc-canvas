@@ -5,6 +5,9 @@
 # +------+
 
 my ($dir) = @ARGV;
+if (! -d $dir) { die "Could not find directory '$dir'"; }
+if (! -X $dir) { die "Could not write director '$dir'"; }
+
 copyDir("Assignments");
 copyDir("Discussions");
 
@@ -24,8 +27,7 @@ sub copyDir($)
       symlink "../$source/$file", $file;
       my $html = $file;
       $html =~ s/.md$/.html/;
-      if (-f $html) { unlink $html; }
-      symlink "../$source/$html", "$html";
+      system "touch -t 200001010000 $html";
     } # if
   } # while
   close $dh;
