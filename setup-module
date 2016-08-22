@@ -1,0 +1,27 @@
+#!/usr/bin/perl
+
+# setup-module name dir
+#   Do most of the setup for the given module in the specified
+#   directory.
+
+# +-------+----------------------------------------------------------
+# | Setup |
+# +-------+
+
+my ($name,$dir) = @ARGV;
+print STDERR "Making module $name in $dir\n";
+my $template = "Modules/$name.template";
+if (! -f $template) { die "Could not find template for '$name'"; }
+if (! -d $dir) { die "Could not find directory '$dir'"; }
+if (! -X $dir) { die "Could not write directory '$dir'"; }
+
+print STDERR "1. Setting up the .module file.\n";
+system "make $dir/$name.module" || die "Failed to make module.";
+
+print STDERR "2. Setting up the due dates.\n";
+system "make $dir/$name-due.html" || die "Failed to make due dates.";
+
+print STDERR "3. Setting up the links.\n";
+system "make-links $dir/$name.module $dir" || die "Failed to make links.";
+
+print STDERR "Done!\n";
