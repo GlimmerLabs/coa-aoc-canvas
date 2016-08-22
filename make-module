@@ -73,7 +73,7 @@ while (my $line = <$PORT>) {
     } # assignment
     elsif ($type eq "Discussion") {
       if ($content_id eq "_") {
-        $content_id = makeDiscussion($title,$due);
+        $content_id = makeDiscussion($title,$due,$other);
         if (!$content_id) {
           print STDERR "Could not make discussion $title.\n";
           exit 1;
@@ -284,7 +284,7 @@ sub makeDiscussion($;$$) {
   if (!$points) { $points = 10; }
 
   # Status
-  print STDERR "Creating discussion '$title', due '$due'\n";
+  print STDERR "Creating discussion '$title', due '$due', points '$points'\n";
 
   # See if a discussion with the same name already exists.  (We try not
   # to duplicate discussion names.)
