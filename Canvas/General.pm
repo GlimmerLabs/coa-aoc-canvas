@@ -50,6 +50,10 @@ sub submitRequest($;$) {
       print STDERR "Received reply: [$message]\n";
     }
     my $stuff = parse_json($message);
+    # Hack!  If we get an array, use the first element
+    if (ref $stuff eq "ARRAY") {
+      $stuff = @$stuff[0];
+    }
     my $id = @$stuff{$field};
     if (!$id) { $id = ""; }
     # print STDERR "Id is [$id]\n";
