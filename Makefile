@@ -46,4 +46,4 @@ default:
 # +------------------+
 
 BPHOT/getting-started.html: BPHOT/getting-started-due.html
-BPHOT/getting-started-with-processing.html: BPHOT/getting-strated-with-processing-due.html
+BPHOT/getting-started-with-processing.html: BPHOT/getting-started-with-processing-due.html
