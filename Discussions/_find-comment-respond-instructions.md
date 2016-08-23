@@ -8,6 +8,10 @@ by a prompt), and then respond to a specified number of your
 colleagues' comments.  When choosing which comments to respond to,
 you should generally try to find the reflections with fewer responses._
 
+_Note that in order for find, comment, respond assignments to work, you
+must make your original posts early enough in the week for your colleagues
+to post responses._
+
 _In grading these of assignments, I tend to look for the seriousness
 of your comments and responses._
 
