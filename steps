@@ -2,6 +2,9 @@
 # | Normal Sequence |
 # +-----------------+
 
+# Make sure that we're using the right course
+cp .bphot .course
+
 # Copy some basic materials
 copy-instructions BPHOT
 copy-introductions BPHOT
@@ -29,6 +32,9 @@ make BPHOT/*.page
 # +------+-----------------------------------------------------------
 # | Live |
 # +------+
+
+# Make sure that we're using the right course
+cp .live .course
 
 # Copy some basic materials
 copy-instructions Live
