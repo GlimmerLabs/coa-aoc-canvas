@@ -7,22 +7,57 @@ copy-instructions BPHOT
 copy-introductions BPHOT
 
 # Modules
-make BPHOT/getting-started.module
-make BPHOT/getting-started-due.html
-make-links BPHOT/getting-started.module BPHOT
-
-make BPHOT/getting-started-with-processing.module
-make-links BPHOT/getting-started-with-processing.module BPHOT
+setup-module portfolio BPHOT
+setup-module final-project BPHOT
+setup-module additional-explorations BPHOT
+setup-module argumentative-art BPHOT
+setup-module interactivity BPHOT
+setup-module pixels-and-filters BPHOT
+setup-module arrays-and-repetition BPHOT
+setup-module encapsulating-information-with-objects BPHOT
+setup-module making-choices BPHOT
+setup-module getting-started-with-processing BPHOT
+setup-module getting-started BPHOT
 
 # Upload!
-touch BPHOT/*.md
+make BPHOT/*instructions.html
 make BPHOT/*.html
 make BPHOT/*.discussion
 make BPHOT/*.assignment
+make BPHOT/*.page
+
+# +------+-----------------------------------------------------------
+# | Live |
+# +------+
+
+# Copy some basic materials
+copy-instructions Live
+copy-introductions Live
+
+# Modules
+setup-module portfolio Live
+setup-module final-project Live
+setup-module additional-explorations Live
+setup-module argumentative-art Live
+setup-module interactivity Live
+setup-module pixels-and-filters Live
+setup-module arrays-and-repetition Live
+setup-module encapsulating-information-with-objects Live
+setup-module making-choices Live
+setup-module getting-started-with-processing Live
+setup-module getting-started Live
+
+# Upload!
+make Live/*instructions.html
+make Live/*.html
+make Live/*.discussion
+make Live/*.assignment
+make Live/*.page
 
 # +---------------+--------------------------------------------------
 # | Miscellaneous |
 # +---------------+
 
 # Cleanup (later)
-rm BPHOT/[12]*.*
+rm BPHOT/[0-9]*.*
+rm Live/[0-9]*.*
