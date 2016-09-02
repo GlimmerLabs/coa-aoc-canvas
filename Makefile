@@ -34,6 +34,10 @@ Live/%.module: Modules/%.template
 %-due.html: %.module
 	make-due $^ > $@
 
+# Extract toc for each module to use in introduction
+%-toc.html: %.module
+	make-toc $^ > $@
+
 # +---------+--------------------------------------------------------
 # | Default |
 # +---------+
