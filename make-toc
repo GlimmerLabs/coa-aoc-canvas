@@ -1,0 +1,78 @@
+#!/usr/bin/perl
+# make-toc file
+#   Create a simple table-of-contents for a module
+#   See make-module for the file format.
+
+# +-------+----------------------------------------------------------
+# | Setup |
+# +-------+
+
+my $file = $ARGV[0];
+
+# +------+-----------------------------------------------------------
+# | Main |
+# +------+
+
+open my $PORT, "< $file" or die "Could not open file '$file' because $!";
+my $title = <$PORT>;
+
+my $curlevel = 0;
+
+while (my $line = <$PORT>) {
+  my $newline = $line;
+  chomp($line);
+  $line =~ s/^( *)//;
+  my $spaces = "  $1";
+  my $newlevel = length($spaces)/2;
+
+  while ($curlevel < $newlevel) {
+    for (my $i = 0; $i < $curlevel; $i++) { print "  "; }
+    print "<ul>\n";
+    ++$curlevel;
+  } # while
+
+  while ($curlevel > $newlevel) {
+    --$curlevel;
+    for (my $i = 0; $i < $curlevel; $i++) { print "  "; }
+    print "</ul>\n";
+  }
+
+  # Content
+  print "$spaces<li>";
+
+  if ($line =~ m/^{/) {
+    $line =~ s/^{//;
+    $line =~ s/}$//;
+    my ($type,$title,$content_id,$due,$other) = split(/;/,$line);
+    if ($content_id eq "_") {
+      print "$title";
+    }
+    elsif ($type eq "Assignment") {
+      print "<a href='../assignments/$content_id'>$title</a>";
+    } # assignment
+    elsif ($type eq "Discussion") {
+      print "<a href='../discussion_topics/$content_id'>$title</a>";
+    } # discussion
+    elsif ($type eq "Page") {
+      print "<a href='../pages/$content_id'>$title</a>";
+    } # page
+    else {
+      print STDERR "Entry $title has unknown type: $type\n";
+      exit 1;
+    }
+  } # if content
+  else {
+    print "$line";
+  }
+
+  print "<\/li>\n";
+}
+
+while ($curlevel > 0) {
+  --$curlevel;
+  for (my $i = 0; $i < $curlevel; $i++) { print "  "; }
+  print "</ul>\n";
+}
+close $PORT;
+exit 0;
+
