@@ -52,7 +52,12 @@ sub submitRequest($;$) {
     if ($message =~ m/"$field":"(.*?)"/) {
       $id = $1;
     }
-    # print STDERR "Id is [$id]\n";
+    elsif ($message =~ m/"$field":([0-9]*)/) {
+      $id = $1;
+    }
+    if ($VERBOSE) {
+      print STDERR "Id is [$id]\n";
+    }
     return $id;
   }
   else {
