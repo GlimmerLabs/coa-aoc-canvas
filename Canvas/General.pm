@@ -12,7 +12,6 @@ use warnings;
 use strict;
 use LWP::UserAgent;
 use HTTP::Request::Common;
-use JSON::Parse 'parse_json';
 use Canvas::Setup;
 
 # +-------+---------------------------------------------------------
@@ -49,13 +48,10 @@ sub submitRequest($;$) {
     if ($VERBOSE) {
       print STDERR "Received reply: [$message]\n";
     }
-    my $stuff = parse_json($message);
-    # Hack!  If we get an array, use the first element
-    if (ref $stuff eq "ARRAY") {
-      $stuff = @$stuff[0];
+    my $id = "";
+    if ($message =~ m/"$field":"(.*?)"/) {
+      $id = $1;
     }
-    my $id = @$stuff{$field};
-    if (!$id) { $id = ""; }
     # print STDERR "Id is [$id]\n";
     return $id;
   }
