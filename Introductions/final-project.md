@@ -33,6 +33,11 @@ competencies for this course.
 * *Course: Computational Thinking*.  You apply principles of computational
   thinking.
 
+Overview
+--------
+
+^final-project-toc.html^
+
 Assignments
 -----------
 

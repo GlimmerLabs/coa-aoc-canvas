@@ -26,6 +26,11 @@ Primary competencies for this module
 * *Course: Digital Ethics*.  You develop a personal ethics of reuse and 
   apply it to your work in the course.
 
+Overview
+--------
+
+^interactivity-toc.html^
+
 Assignments
 -----------
 

@@ -26,6 +26,11 @@ Primary competencies for this module
 * *Course: Computational Thinking*.  You apply principles of computational
   thinking.
 
+Overview
+--------
+
+^additional-explorations-toc.html^
+
 Assignments
 -----------
 
