@@ -18,6 +18,8 @@ my $data = path($file)->slurp;
 # $data =~ s/h([1-5])>/newHead($1)/ge;
 $data =~ s/<h1>.*<\/h1>//g;
 $data =~ s/<p>\^(.*)\^<\/p>/includeFile($1)/ge;
+# $data =~ s/<pre><code>\^(.*?)\^.*?<\/pre><\/html>/includeFile($1)/gse;
+$data =~ s/<pre><code>\^(.*?)\^\n<\/code><\/pre>/includeFile($1)/gse;
 print $data;
 
 # +-------------+----------------------------------------------------
