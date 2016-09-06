@@ -6,9 +6,7 @@
 # | Libraries |
 # +-----------+
 
-use LWP::UserAgent;
 use HTTP::Request::Common;
-use JSON::Parse 'parse_json';
 use Canvas::Setup;
 use Canvas::General;
 use Path::Tiny;
@@ -27,3 +25,4 @@ my $req = PUT canvasURL("pages/$id"),
 submitRequest($req,"url") || die "Failed to update topic.";
 
 exit 0;
+
