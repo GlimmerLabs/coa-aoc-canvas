@@ -330,9 +330,16 @@ sub makeModule($) {
   # Set up the request
   my $req = POST canvasURL("modules"),
                  [ 'module[name]' => "$title",
-                   'module[position]' => 1,
+                   'module[position]' => 2,
                    'module[published]' => true ];
-  return submitRequest($req);
+  $id = submitRequest($req);
+  if (!$id) {
+    return $id;
+  }
+  my $publish = PUT canvasURL("modules/$id"),
+                    [ 'module[published]' => true ];
+  submitRequest($publish);
+  return $id;
 } # makeModule
 
 sub makePage($) 
