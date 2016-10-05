@@ -256,10 +256,6 @@ sub makeAssignment($;$$) {
 
   # See if an assignment with the same name already exists.  (We try not
   # to duplicate assignment names.)
-  if (my $id = findAssignment($title)) {
-    print STDERR "  Assignment already exists as $id.\n";
-    return $id;
-  }
 
   # Set up the request
   my %params = ('assignment[name]' => "$title",
@@ -270,9 +266,17 @@ sub makeAssignment($;$$) {
   if ($due) {
     $params{"assignment[due_at]"} = $due;
   }
-  my $req = POST canvasURL("assignments"),
-                 Content => \%params;
+  my $req;
   
+  if (my $id = findAssignment($title)) {
+    $req = PUT canvasURL("assignments/$id"),
+                 Content => \%params;
+  }
+  else {
+    $req = POST canvasURL("assignments"),
+                 Content => \%params;
+  }
+
   # And do the work
   return submitRequest($req);
 } # makeAssignment
@@ -286,25 +290,32 @@ sub makeDiscussion($;$$) {
   # Status
   print STDERR "Creating discussion '$title', due '$due', points '$points'\n";
 
-  # See if a discussion with the same name already exists.  (We try not
-  # to duplicate discussion names.)
-  if (my $id = findDiscussion($title)) {
-    print STDERR "  Discussion already exists as $id.\n";
-    return $id;
-  }
-
   # Set up the request
   my %params = ( 'title' => "$title",
                  'discussion_type' => "threaded",
+                 'published' => true,
                  'assignment[grading_type]' => "points",
                  'assignment[points_possible]' => $points );
   
   if ($due) {
     $params{"assignment[due_at]"} = $due;
   }
-  my $req = POST canvasURL("discussion_topics"),
-                 Content => \%params;
-  
+
+  # The request
+  my $req;
+
+  # See if a discussion with the same name already exists.  (We try not
+  # to duplicate discussion names.)
+  if (my $id = findDiscussion($title)) {
+    print STDERR "  Discussion already exists as $id.  Updating.\n";
+    $req = PUT canvasURL("discussion_topics/$id"),
+              Content => \%params;
+  }
+  else {
+    $req = POST canvasURL("discussion_topics"),
+              Content => \%params;
+  }
+
   # And do the work
   return submitRequest($req);
 } # makeDiscussion
@@ -319,7 +330,8 @@ sub makeModule($) {
   # Set up the request
   my $req = POST canvasURL("modules"),
                  [ 'module[name]' => "$title",
-                   'module[position]' => 1 ];
+                   'module[position]' => 1,
+                   'module[published]' => true ];
   return submitRequest($req);
 } # makeModule
 
